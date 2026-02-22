@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import "./App.css";
 // src/App.jsx
 
 const App = () => {
@@ -88,6 +88,27 @@ const App = () => {
     },
   ]);
 
+const handleAddFighter = (fighter) => {
+  if (money < fighter.price) {
+    console.log("Not enough money");
+    return;
+  }
+  setTeam([...team, fighter]);
+  setZombieFighters(zombieFighters.filter((f) => f.id !== fighter.id));
+  setMoney(money - fighter.price);
+};
+
+
+const totalStrength = team.reduce((acc, fighter) => acc + fighter.strength, 0);
+const totalAgility = team.reduce((acc, fighter) => acc + fighter.agility, 0);
+
+const handleRemoveFighter = (fighter) => {
+  setTeam(team.filter((f) => f.id !== fighter.id));
+  setZombieFighters([...zombieFighters, fighter]);
+  setMoney(money + fighter.price);
+};
+
+
   return (
     <>
       <h1>Zombie Apocalypse Team Builder</h1>
@@ -106,8 +127,32 @@ const App = () => {
           </li>
         ))}
       </ul>
+
+      <h2>Your Team</h2>
+      <p>Total Strength: {totalStrength}</p>
+      <p>Total Agility: {totalAgility}</p>
+
+      {team.length === 0 ? (
+        <p>Pick some team members!</p>
+      ) : (
+        <ul>
+          {team.map((fighter) => (
+            <li key={fighter.id}>
+              <img src={fighter.img} alt={fighter.name} />
+              <h3>{fighter.name}</h3>
+              <p>Price: {fighter.price}</p>
+              <p>Strength: {fighter.strength}</p>
+              <p>Agility: {fighter.agility}</p>
+              <button onClick={() => handleRemoveFighter(fighter)}>
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 };
+
 
 export default App;
